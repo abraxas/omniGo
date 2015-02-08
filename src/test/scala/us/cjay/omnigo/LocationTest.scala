@@ -4,6 +4,8 @@ import org.scalatest._
 
 /**
  * Created by C.Jay on 2/7/2015.
+ *
+ * Yo!
  */
 class LocationTest extends FlatSpec with Matchers {
   "A Location" should "be buildable" in {
