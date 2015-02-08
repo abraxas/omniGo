@@ -42,20 +42,28 @@ WC[kr]                ???
 ;W[ab];B[hb];W[jc];B[ic];W[fe];B[lm];W[kk])
  */
 object SgfParsers extends RegexParsers {
-  def color: Parser[String] = """[WB]""".r
-  def loc: Parser[String] = """[A-Ta-t]""".r
-  def unquotedString: Parser[String] = """(?:[^\]]||\\\])*""".r
+  def header: Parser[SGFHeader] = field ~ "[" ~ unquotedString ~ "]" ^^ {
+    case field ~ "[" ~ value ~ "]" => SGFHeader(field, value)
+  }
 
-  def comment: Parser[String] = "C["~>unquotedString<~"]"
+  def field: Parser[String] = """\w+""".r
+
+  def moves: Parser[Array[Move]] = {
+    repsep(move, "") ^^ (_.toArray)
+  }
 
   def move: Parser[Move] = {
-    color~"["~loc~loc~"]"~comment.? ^^ {
-      case color~"["~loc1~loc2~"]"~comment => Move(color,loc1,loc2,comment)
+    ";" ~ color ~ "[" ~ loc ~ loc ~ "]" ~ comment.? ^^ {
+      case ";" ~ color ~ "[" ~ loc1 ~ loc2 ~ "]" ~ comment => Move(color, loc1, loc2, comment)
     }
   }
 
-  def moves: Parser[Array[Move]] = {
-    ";" ~> repsep(move,";") ^^ (_.toArray)
-  }
+  def color: Parser[String] = """[WB]""".r
+
+  def loc: Parser[String] = """[A-Ta-t]""".r
+
+  def comment: Parser[String] = "C[" ~> unquotedString <~ "]"
+
+  def unquotedString: Parser[String] = """(?:[^\]]||\\\])*""".r
 }
 
