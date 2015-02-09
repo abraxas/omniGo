@@ -6,6 +6,14 @@ import us.cjay.omnigo.Piece._
  * Created by User on 2/8/2015.
  */
 class Move(val location: Location, val piece: Piece, val comment: Option[String] = None) {
+  //override def equals(other: Any): Boolean = {
+  //other match {
+  //case foo: Move =>
+  //foo.location==location && foo.piece==piece &&
+  //}
+  //false
+
+  //}
 }
 
 object Move {
@@ -15,6 +23,7 @@ object Move {
   def apply(locString: String, piece: Piece): Move = {
     new Move(Location(locString),piece)
   }
+
 
   def apply(color: String, loc1: String, loc2: String, comment: Option[String] = None): Move = {
     val piece = Piece(color)
@@ -27,3 +36,28 @@ object Move {
   }
 }
 
+//type Mover = Either[Move,MoveList]
+
+class MoveList(val get: List[Move])
+
+object MoveList {
+
+  def apply(get: List[Move]): MoveList = {
+    new MoveList(get)
+  }
+
+  def apply(get: Array[Move]): MoveList = {
+    new MoveList(get.toList)
+  }
+
+}
+
+class MoveNode(get: Move, parent: MoveNode, children: Array[MoveNode] = Array.empty)
+
+class MoveTree(root: MoveNode) {
+
+}
+
+/*object MoveTree {
+  apply
+}*/

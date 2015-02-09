@@ -42,14 +42,42 @@ WC[kr]                ???
 ;W[ab];B[hb];W[jc];B[ic];W[fe];B[lm];W[kk])
  */
 object SgfParsers extends RegexParsers {
+  def comment: Parser[String] = "C[" ~> unquotedString <~ "]"
+
+  def headers: Parser[SGFHeaders] = ";" ~> repsep(header, "") ^^ { headerList =>
+    SGFHeaders.fromTokens(headerList.toArray)
+  }
+
   def header: Parser[SGFHeader] = field ~ "[" ~ unquotedString ~ "]" ^^ {
     case field ~ "[" ~ value ~ "]" => SGFHeader(field, value)
   }
 
-  def field: Parser[String] = """\w+""".r
+  private def field: Parser[String] = """\w+""".r
 
-  def moves: Parser[Array[Move]] = {
-    repsep(move, "") ^^ (_.toArray)
+  private def unquotedString: Parser[String] = """(?:[^\]]||\\\])*""".r
+
+  def mover: Parser[Either[MoveList, Move]] = {
+    moveList ^^ { y => Left(y)} | move ^^ { x => Right(x)}
+  }
+
+  def moves: Parser[Array[Either[MoveList, Move]]] = {
+    repsep(mover, "") ^^ (_.toArray)
+  }
+
+  /*
+  Moves I wanna parse right: ;B[pd](;W[pp];B[dd];W[dp])(;W[cd];B[pq];W[dq];B[qk])
+
+  AKA:
+    ;B[pd]
+      (;W[pp];B[dd];W[dp])
+      (;W[cd];B[pq];W[dq];B[qk])
+
+   */
+
+  def moveList: Parser[MoveList] = {
+    "(" ~ repsep(move, "") ~ ")" ^^ {
+      case "(" ~ moves ~ ")" => MoveList(moves)
+    }
   }
 
   def move: Parser[Move] = {
@@ -58,12 +86,10 @@ object SgfParsers extends RegexParsers {
     }
   }
 
-  def color: Parser[String] = """[WB]""".r
+  private def color: Parser[String] = """[WB]""".r
 
-  def loc: Parser[String] = """[A-Ta-t]""".r
+  private def loc: Parser[String] = """[A-Ta-t]""".r
 
-  def comment: Parser[String] = "C[" ~> unquotedString <~ "]"
 
-  def unquotedString: Parser[String] = """(?:[^\]]||\\\])*""".r
 }
 

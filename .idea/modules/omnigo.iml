@@ -32,6 +32,9 @@
     <orderEntry type="library" scope="TEST" name="SBT: org.scalatest:scalatest_2.11:2.2.1" level="project" />
     <orderEntry type="library" name="SBT: org.scala-lang:scala-library:2.11.5" level="project" />
     <orderEntry type="library" name="SBT: org.scala-lang.modules:scala-parser-combinators_2.11:1.0.3" level="project" />
+    <orderEntry type="library" name="SBT: com.github.nscala-time:nscala-time_2.11:1.8.0" level="project" />
+    <orderEntry type="library" name="SBT: joda-time:joda-time:2.7" level="project" />
+    <orderEntry type="library" name="SBT: org.joda:joda-convert:1.2" level="project" />
   </component>
 </module>
 
